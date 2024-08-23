@@ -1,4 +1,4 @@
-# CPSC 210 Docker Image
+# CPSC 312 Docker Image for Haskell
 
 This repository contains all the bits and pieces needed to build and customize a Workspace container for PrairieLearn.
 
@@ -8,13 +8,13 @@ Here is what needs to be done if a **new** image is to be created:
 
 - On GitHub.com (on this page) Click "Use this template"
 - Update the new repository name using the following naming convention:
-    - workspace_$course_$label ; for this repo, `$course` is `cpsc210` and `$label` can be `primary`.
+    - workspace_$course_$language_$label ; for this repo, `$course` is `cpsc313`, `$language` is Haskell, and `$label` can be `primary`.
     - Please keep this repo within the PrairieLearnUBC organization
-- Update the Docker image label in the [`docker-build-push.yml.yml` file](https://github.com/PrairieLearnUBC/workspace_cpsc210_primary/blob/main/.github/workflows/docker-build-push.yml#L28-L29) appropriately
+- Update the Docker image label in the [`docker-build-push.yml.yml` file](https://github.com/PrairieLearnUBC/workspace_cpsc312_haskell_primary/blob/main/.github/workflows/docker-build-push.yml#L28-L29) appropriately
     - For example, if `$label` is `lab`, then the `latest` tag should be updated to: `latest-lab` and the SHA tag should be updated to: `lab-${{ env.SHORT_SHA }}`
 - Ask the maintainer of the PrairieLearnUBC organization (currently, [Firas Moosvi](firas.moosvi@ubc.ca)) to grant the new repo permission to push to the `ubcpl` DockerHub account.
 - In your question's `info.json` file, update the `image` field in the `externalGradingOptions` to reflect the new tag
-    - For example, `"image": "ubcpl/cpsc210:latest-lab"`
+    - For example, `"image": "ubcpl/cpsc313:latest-lab"`
 - Remember to sync the Docker Hub image to PL
 
 ## Running Docker locally to develop PL workspaces
@@ -25,9 +25,9 @@ First pull the PL image (`--platform` flag to deal with M1/M2 macs):
 docker pull prairielearn/prairielearn --platform linux/amd64
 ```
 
-`cd` to the parent directory of your PrairieLearn courses (e.g., `pl-ubc-cpsc210`).
+`cd` to the parent directory of your PrairieLearn courses (e.g., `pl-ubc-cpsc312`).
 
-Create a new directory where it was created: `/Users/firasm/tmp/pl_ag_jobs`.
+Create a new directory where it was created: `$HOME/pl_ag_jobs`.
 
 Then run this (Update paths as needed) to launch a local instance of PrairieLearn:
 
@@ -35,12 +35,11 @@ Then run this (Update paths as needed) to launch a local instance of PrairieLear
 docker run -it --rm -p 3000:3000 \
 --pull=always \
 --platform linux/amd64 \
--v ./pl-ubc-cpsc210:/course \
--v ./pl-ubc-cpsc203:/course2 \
--v "/Users/firasm/tmp/pl_ag_jobs:/jobs" \
--e HOST_JOBS_DIR="/Users/firasm/tmp/pl_ag_jobs" \
+-v ./pl-ubc-cpsc312:/course \
+-v "$HOME/pl_ag_jobs:/jobs" \
+-e HOST_JOBS_DIR="$HOME/pl_ag_jobs" \
 -v /var/run/docker.sock:/var/run/docker.sock prairielearn/prairielearn
--v /Users/firasm/Sync/Teaching/2023_2024/2023W2/config.json:/PrairieLearn/config.json
+-v /Users/wolf/Sync/Teaching/2023_2024/2023W2/config.json:/PrairieLearn/config.json
 ```
 
 TODO: FYI, with the last line, we are trying to run workspaces as `coder` instead of `root`; unfortunately this doesn't quite work yet...

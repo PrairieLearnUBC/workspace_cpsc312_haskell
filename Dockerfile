@@ -1,3 +1,5 @@
+# Variant for Haskell in CPSC 312, based on https://github.com/PrairieLearnUBC/workspace_cpsc210
+
 # Enhanced code-server workspace template for PrairieLearn.
 # As discussed here: https://github.com/PrairieLearn/PrairieLearn/issues/3170
 # Based on the original Dockerfiles for code-server.
@@ -22,24 +24,48 @@ RUN export OLD_UID=$(id -u coder) && \
 	find /home -user $OLD_UID -execdir chown -h $NEW_UID {} + && \
 	find /home -group $OLD_GID -execdir chgrp -h $NEW_GID {} + && \
 	unset OLD_UID OLD_GID NEW_UID NEW_GID
-	
-	
-COPY --chown=coder:coder shengchen.vscode-checkstyle-1.4.2.vsix /tmp/shengchen.vscode-checkstyle-1.4.2.vsix
+
+
+
+
 
 # Cleaning up the cache in the same step when we install is important if you
 # want to minimize the image size.
 USER coder
+
+####################################################
+## Install Haskell
+
+RUN sudo apt-get update -y
+RUN sudo apt-get install -y \
+    build-essential \
+    curl \
+    libffi-dev \
+    libffi8 \
+    libgmp-dev \
+    libgmp10 \
+    libncurses-dev \
+    libncurses5 \
+    libtinfo5 \
+    pkg-config
+
+# Install with HLS and set up the PATH properly.
+ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+ENV BOOTSTRAP_HASKELL_INSTALL_HLS=1
+ENV BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
+RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
+# # UPDATE LTS HERE
+# # Review https://www.stackage.org/ to compare ghc versions to what's available.
+# ENV LTS=lts-22.31
+
+
 RUN ( code-server --disable-telemetry --force \
 		# Install only one extension per line.
-		--install-extension redhat.java \
-		--install-extension vscjava.vscode-java-debug \
-		--install-extension vscjava.vscode-java-test \
-		--install-extension vscjava.vscode-java-dependency \
+		--install-extension haskell.haskell \
 		--install-extension ms-vscode.live-server \
-		--install-extension /tmp/shengchen.vscode-checkstyle-1.4.2.vsix \
 	) && \
-	rm -rf /home/coder/.local/share/code-server/CachedExtensionVSIXs && \
-	rm /tmp/shengchen.vscode-checkstyle-1.4.2.vsix
+	rm -rf /home/coder/.local/share/code-server/CachedExtensionVSIXs
 
 
 # Prepare the entrypoints. The entrypoint.sh part is based on what code-server
@@ -84,17 +110,8 @@ RUN /bin/sh -c echo "**** install runtime dependencies ****" && \
 	libatomic1 \
 	net-tools \
 	netcat-traditional 
-    	
-RUN /bin/sh -c echo "**** install Coretto JDK 11 & 17" && \
-	sudo apt-get install -y gnupg && \
-	#sudo wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add - && \
-	#sudo add-apt-repository 'deb https://apt.corretto.aws stable main' && \
-	wget -O - https://apt.corretto.aws/corretto.key | sudo gpg --dearmor -o /usr/share/keyrings/corretto-keyring.gpg && \
-	echo "deb [signed-by=/usr/share/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main" | sudo tee /etc/apt/sources.list.d/corretto.list && \
-	sudo apt-get update && \
-	sudo apt-get install -y java-11-amazon-corretto-jdk && \
-	sudo apt-get install -y java-17-amazon-corretto-jdk  && \
-	echo "**** clean up ****" && \
+
+RUN echo "**** clean up ****" && \
 	sudo apt-get clean && \
 	sudo rm -rf \
 	/config/* \
@@ -121,18 +138,18 @@ RUN /bin/sh -c echo "**** install Coretto JDK 11 & 17" && \
 # you prepared in the image. (However, if students try to customize their
 # editor settings, those will get reset in between sessions this way.)
 USER coder
-ENV EDITOR_FOCUS_DIR "/home/coder/prairielearn/project/JavaProject"
+ENV EDITOR_FOCUS_DIR="/home/coder/prairielearn/project/Project"
 RUN mkdir -p "$EDITOR_FOCUS_DIR"
 WORKDIR "$EDITOR_FOCUS_DIR"
 
 
-RUN mkdir -p "/home/coder/.local/share/code-server/User" "/home/coder/prairielearn/project/JavaProject"
+RUN mkdir -p "/home/coder/.local/share/code-server/User" "/home/coder/prairielearn/project/Project"
 COPY --chmod=0444 settings.json /home/coder/.local/share/code-server/User/settings.json
 COPY --chmod=0666 keybindings.json /home/coder/.local/share/code-server/User/keybindings.json
 COPY --chmod=0444 coder.json /home/coder/.local/share/code-server/coder.json
 COPY --chmod=0444 settingsEmpty.json /home/coder/.local/share/code-server/Machine/settings.json
-COPY --chmod=0555 workspaceTemplate/.scripts /home/coder/prairielearn/project/JavaProject/.scripts
-COPY --chmod=0444 workspaceTemplate/.vscode /home/coder/prairielearn/project/JavaProject/.vscode
-COPY --chmod=0444 workspaceTemplate/.lib /home/coder/prairielearn/project/JavaProject/.lib
+COPY --chmod=0555 workspaceTemplate/.scripts /home/coder/prairielearn/project/Project/.scripts
+COPY --chmod=0444 workspaceTemplate/.vscode /home/coder/prairielearn/project/Project/.vscode
+COPY --chmod=0444 workspaceTemplate/.lib /home/coder/prairielearn/project/Project/.lib
 
 ENTRYPOINT ["/usr/bin/env", "sh", "/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8080", "."]

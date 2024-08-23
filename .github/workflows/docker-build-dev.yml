@@ -37,5 +37,5 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ubcpl/cpsc210:${{ env.BRANCH_NAME }}
-            ubcpl/cpsc210:${{ env.SHORT_SHA }}
+            ubcpl/cpsc312_haskell:${{ env.BRANCH_NAME }}
+            ubcpl/cpsc312_haskell:${{ env.SHORT_SHA }}

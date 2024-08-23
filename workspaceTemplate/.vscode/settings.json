@@ -1,16 +1,2 @@
 {
-    "java.project.sourcePaths": ["src/main", "src/test"],
-    "java.project.outputPath": "bin",
-    "java.project.referencedLibraries": [
-        ".lib/**/*.jar",
-        "./src/.lib/**/*.jar"
-        
-    ],
-    "java.configuration.runtimes": [
-        {
-            "name": "JavaSE-11",
-            "path": "/usr/lib/jvm/java-11-amazon-corretto",
-            "default": true
-        }
-    ]
 }

@@ -12,7 +12,7 @@
     "telemetry.enableTelemetry": false,
     "telemetry.telemetryLevel": "off",
     "files.exclude": { "**/.*": true },
-    "terminal.integrated.cwd": "/home/coder/prairielearn/project/JavaProject",
+    "terminal.integrated.cwd": "/home/coder/prairielearn/project/Project",
     "auto-run-command.rules": [
         {
             "command": "workbench.action.terminal.new"
@@ -48,22 +48,9 @@
     "editor.suggest.showColors": false,
     "editor.suggest.showClasses": false,
     "editor.suggest.matchOnWordStartOnly": false,
-    "java.completion.enabled": false,
-    "java.completion.postfix.enabled": false,
-    "java.completion.lazyResolveTextEdit.enabled": false,
     "editor.hover.enabled": false,
-    "java.signatureHelp.enabled": false,
-    "java.completion.guessMethodArguments": "off",
-    "java.inlayHints.parameterNames.enabled": "none",
-    "java.debug.settings.exceptionBreakpoint.skipClasses": [],
     "problems.visibility": false,
-    "java.autobuild.enabled": false,
     "editor.lightbulb.enabled": false,
     "remote.autoForwardPorts": false, // Stop autoforwarding ports to prevent settings.json writing
-    "java.server.launchMode": "Standard",
-    "java.debug.settings.debugSupportOnDecompiledSource": "off",
-    "editor.codeActionsOnSave": {},
-    "java.checkstyle.autocheck": false,
-    "java.checkstyle.configuration": "${workspaceFolder}/src/.config/checkstyle.xml",
-    "livePreview.defaultPreviewPath": "/jacoco/index.html"
+    "editor.codeActionsOnSave": {}
 }
