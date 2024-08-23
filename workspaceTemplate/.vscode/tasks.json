@@ -1,0 +1,36 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate Jacoco Report",
+            "type": "shell",
+            "command": "./.scripts/jacoco.sh ./src/.config/jacoco.includes"
+        },
+        {
+        	"label": "Stop Live Preview",
+        	"command": "${command:livePreview.end}"
+        },
+        {
+            "label": "Jacoco Report",
+            "command": "${command:livePreview.start}",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Stop Live Preview", "Generate Jacoco Report"]
+        },
+        {
+            "type": "java (build)",
+            "paths": [
+                "${workspace}"
+            ],
+            "isFullBuild": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "label": "java (build): Build Workspace",
+            "detail": "$(tools) Build all the Java projects in workspace."
+        }
+    ]
+}

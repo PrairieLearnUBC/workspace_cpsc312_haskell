@@ -1,0 +1,18 @@
+// Place your key bindings in this file to override the defaults
+// Write to ./local/share/code-server/User/keybindings.json
+[
+
+    {
+        "key": "shift+alt+p",
+        "command": "livePreview.start"
+    },
+    {
+        "key": "shift+alt+j",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Jacoco Report"
+    },
+    {
+        "key": "shift+alt+c",
+        "command": "java.checkstyle.checkCode"
+    }
+]
