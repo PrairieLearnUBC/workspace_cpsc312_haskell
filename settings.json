@@ -52,5 +52,6 @@
     "problems.visibility": false,
     "editor.lightbulb.enabled": false,
     "remote.autoForwardPorts": false, // Stop autoforwarding ports to prevent settings.json writing
-    "editor.codeActionsOnSave": {}
+    "editor.codeActionsOnSave": {},
+    "haskell.manageHLS": "GHCup"
 }

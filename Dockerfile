@@ -50,8 +50,14 @@ RUN sudo apt-get install -y \
     pkg-config
 
 # Install with HLS and set up the PATH properly.
+# (Trying to run HLS with recommended is failing!)
 ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
 ENV BOOTSTRAP_HASKELL_INSTALL_HLS=1
+ENV BOOTSTRAP_HASKELL_GHC_VERSION=latest
+ENV BOOTSTRAP_HASKELL_CABAL_VERSION=latest
+ENV BOOTSTRAP_HASKELL_STACK_VERSION=latest
+ENV BOOTSTRAP_HASKELL_HLS_VERSION=latest
+# NOT currently getting me the path I need.
 ENV BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
 RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
@@ -151,5 +157,8 @@ COPY --chmod=0444 settingsEmpty.json /home/coder/.local/share/code-server/Machin
 COPY --chmod=0555 workspaceTemplate/.scripts /home/coder/prairielearn/project/Project/.scripts
 COPY --chmod=0444 workspaceTemplate/.vscode /home/coder/prairielearn/project/Project/.vscode
 COPY --chmod=0444 workspaceTemplate/.lib /home/coder/prairielearn/project/Project/.lib
+
+# This DOES work to update the path.
+RUN echo 'export PATH=$PATH:~/.ghcup/bin' >> ~/.bashrc
 
 ENTRYPOINT ["/usr/bin/env", "sh", "/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8080", "."]
