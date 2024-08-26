@@ -17,6 +17,15 @@ Here is what needs to be done if a **new** image is to be created:
     - For example, `"image": "ubcpl/cpsc313:latest-lab"`
 - Remember to sync the Docker Hub image to PL
 
+## Running your Workspace Locally
+
+To run and test your workspace without any connection to PrairieLearn, try a process like the following, replacing `<NAME>` with a name of your choice like `workspacetest`:
+
+1. `docker build -t <NAME>:latest .`
+2. `docker run -p 127.0.0.1:80:8080 <NAME>:latest`
+
+You should then be able to access the workspace via the URL `http://127.0.0.1`. When you're done, you may also want to delete the container. Run `docker ps` to find the name of the container to delete and then `docker remove -f <container>`, with `<container>` replaced by that container name. (That will free up the port association.)
+
 ## Running Docker locally to develop PL workspaces
 
 First pull the PL image (`--platform` flag to deal with M1/M2 macs):
