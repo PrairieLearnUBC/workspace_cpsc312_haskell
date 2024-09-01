@@ -61,6 +61,11 @@ ENV BOOTSTRAP_HASKELL_HLS_VERSION=latest
 ENV BOOTSTRAP_HASKELL_ADJUST_BASHRC=1
 RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
+# Reduce image size by deleting unnecessary files
+# TODO: delete all ~/.ghcup/ghc/**/*_p.a files
+# TODO: delete all files like ~/.ghcup/hls/2.9.0.1/lib/haskell-language-server-2.9.0.1/lib/*
+#       that are not for this version of ghc
+
 # # UPDATE LTS HERE
 # # Review https://www.stackage.org/ to compare ghc versions to what's available.
 # ENV LTS=lts-22.31
@@ -144,21 +149,30 @@ RUN echo "**** clean up ****" && \
 # you prepared in the image. (However, if students try to customize their
 # editor settings, those will get reset in between sessions this way.)
 USER coder
-ENV EDITOR_FOCUS_DIR="/home/coder/prairielearn/project/Project"
-RUN mkdir -p "$EDITOR_FOCUS_DIR"
-WORKDIR "$EDITOR_FOCUS_DIR"
+ENV PROJECT_DIR="/home/coder/prairielearn/project"
+ENV EDITOR_FOCUS_DIR="${PROJECT_DIR}/app"
+ENV PATH="${PATH}:/home/coder/.ghcup/bin"
+RUN mkdir -p "${EDITOR_FOCUS_DIR}"
+RUN mkdir -p "${PROJECT_DIR}/src"
+WORKDIR "${PROJECT_DIR}"
 
 
-RUN mkdir -p "/home/coder/.local/share/code-server/User" "/home/coder/prairielearn/project/Project"
+RUN mkdir -p "/home/coder/.local/share/code-server/User" "/home/coder/prairielearn/project"
 COPY --chmod=0444 settings.json /home/coder/.local/share/code-server/User/settings.json
 COPY --chmod=0666 keybindings.json /home/coder/.local/share/code-server/User/keybindings.json
 COPY --chmod=0444 coder.json /home/coder/.local/share/code-server/coder.json
 COPY --chmod=0444 settingsEmpty.json /home/coder/.local/share/code-server/Machine/settings.json
-COPY --chmod=0555 workspaceTemplate/.scripts /home/coder/prairielearn/project/Project/.scripts
-COPY --chmod=0444 workspaceTemplate/.vscode /home/coder/prairielearn/project/Project/.vscode
-COPY --chmod=0444 workspaceTemplate/.lib /home/coder/prairielearn/project/Project/.lib
+COPY --chmod=0555 workspaceTemplate/.scripts "${PROJECT_DIR}/.scripts"
+COPY --chmod=0444 workspaceTemplate/.vscode "${PROJECT_DIR}/.vscode"
+COPY --chmod=0444 workspaceTemplate/.lib "${PROJECT_DIR}/.lib"
 
-# This DOES work to update the path.
-RUN echo 'export PATH=$PATH:~/.ghcup/bin' >> ~/.bashrc
+# This DOES work to update the path for the user within the Docker image.
+RUN echo 'export PATH=$PATH:/home/coder/.ghcup/bin' >> ~/.bashrc
+
+# Initialize the project and do an initial download of packages.
+COPY --chmod=0666 workspaceTemplate/Main.hs "${PROJECT_DIR}/app/Main.hs"
+COPY --chmod=0666 workspaceTemplate/Lib.hs "${PROJECT_DIR}/src/Lib.hs"
+RUN cabal init . -n -p project --libandexe --application-dir=app --source-dir=src -d base,random --main-is="Main.hs"
+RUN cabal build
 
 ENTRYPOINT ["/usr/bin/env", "sh", "/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8080", "."]

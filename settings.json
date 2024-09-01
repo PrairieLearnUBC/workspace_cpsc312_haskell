@@ -12,7 +12,7 @@
     "telemetry.enableTelemetry": false,
     "telemetry.telemetryLevel": "off",
     "files.exclude": { "**/.*": true },
-    "terminal.integrated.cwd": "/home/coder/prairielearn/project/Project",
+    "terminal.integrated.cwd": "/home/coder/prairielearn/project",
     "auto-run-command.rules": [
         {
             "command": "workbench.action.terminal.new"
@@ -53,5 +53,6 @@
     "editor.lightbulb.enabled": false,
     "remote.autoForwardPorts": false, // Stop autoforwarding ports to prevent settings.json writing
     "editor.codeActionsOnSave": {},
-    "haskell.manageHLS": "GHCup"
+    "haskell.manageHLS": "GHCup",
+    "haskell.ugradeGHCUp": false
 }
