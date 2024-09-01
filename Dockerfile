@@ -122,13 +122,16 @@ RUN /bin/sh -c echo "**** install runtime dependencies ****" && \
 	net-tools \
 	netcat-traditional 
 
+COPY --chmod=0700 haskell_cleanup.sh /home/coder/haskell_cleanup.sh
 RUN echo "**** clean up ****" && \
 	sudo apt-get clean && \
 	sudo rm -rf \
 	/config/* \
 	/tmp/* \
 	/var/lib/apt/lists/* \
-	/var/tmp/*
+	/var/tmp/* && \
+	/home/coder/haskell_cleanup.sh && \
+	rm /home/coder/haskell_cleanup.sh
 
 # TODO: Maybe customize the preferences to set the theme to auto-adjust to the
 # browser, turn off more telemetry, etc.
